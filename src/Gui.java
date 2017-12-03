@@ -1,26 +1,36 @@
+import com.sun.org.apache.bcel.internal.generic.ObjectType;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.Random;
+import java.util.Vector;
 
 public class Gui extends JFrame implements ActionListener{
-    private Main main;
-    private JPanel findVoyagesPanel, makeReservationPanel, confirmReservationPanel;
+    Main main;
+
+    private JPanel findVoyagesPanel, reservationPanel, confirmReservationPanel;
     private JTabbedPane tabbedPane;
     private JLabel dateLabel, departurePointLabel, arrivalPointLabel;
-    private JTextField dateField, departurePointField, arrivalPointField;
-    private JButton findButton;
+    JTextField dateField;
+    JTextField departurePointField;
+    JTextField arrivalPointField;
+    JButton findButton;
     DefaultTableModel tableModel;
 
     private JTable voyagesTable;
 
-
+    private int rowNumber;
+    private int sittingCapacity;
 
     private int widthOfGui = 1000;
 
     private int heightOfGui = 600;
-    Gui() {
+    Gui(int sittingCapacity) {
         this.setSize(this.widthOfGui, this.heightOfGui);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
@@ -34,14 +44,16 @@ public class Gui extends JFrame implements ActionListener{
 
         findVoyagesPanel = new JPanel();
         findVoyagesPanel.setLayout(new BorderLayout());
-        makeReservationPanel = new JPanel();
+        reservationPanel = new JPanel(new GridLayout(rowNumber, 5, 5, 5));
         confirmReservationPanel = new JPanel();
 
         tabbedPane.addTab("FindVoyages", findVoyagesPanel);
-        tabbedPane.addTab("MakeReservation", makeReservationPanel);
+        tabbedPane.addTab("MakeReservation", reservationPanel);
         tabbedPane.addTab("ConfirmReservation", confirmReservationPanel);
 
         designVoyagesPanel();
+
+        designReservationPanel(sittingCapacity);
 
     }
 
@@ -75,6 +87,41 @@ public class Gui extends JFrame implements ActionListener{
         addActionListeners();
     }
 
+    private void designReservationPanel(int sittingCapacity) {
+
+
+        this.sittingCapacity = sittingCapacity;
+        rowNumber = sittingCapacity/4;
+
+        int index = 1;
+        for (int i = 0; i < rowNumber; i++) {
+            for (int j = 0; j < 5; j++) {
+                if(j == 2){
+                    reservationPanel.add(new JLabel(""));
+                }else{
+                    addSeatsRandomly(index);
+                    index++;
+                }
+            }
+        }
+    }
+
+    private void addSeatsRandomly(int index){
+        Random rnd =  new Random();
+        int n = rnd.nextInt();
+        if(n%2 == 0){
+            reservationPanel.add(new Seat(index, selectGenderRandomly()));
+        }else{
+            reservationPanel.add(new Seat(index));
+        }
+    }
+
+    private boolean selectGenderRandomly(){
+        Random rnd =  new Random();
+        int n = rnd.nextInt();
+        boolean gender = n % 2 == 0;
+        return gender;
+    }
 
 
     private void createTable() {
@@ -85,8 +132,23 @@ public class Gui extends JFrame implements ActionListener{
         voyagesTable.getColumn("Id").setMaxWidth(75);
         voyagesTable.getColumn("Departure Point").setMaxWidth(75);
         voyagesTable.getColumn("Arrival Point").setMaxWidth(75);
-        voyagesTable.setEnabled(false);
+        voyagesTable.setEnabled(true);
+        voyagesTable.setCellSelectionEnabled(false);
+        
+        voyagesTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(final MouseEvent e) {
 
+                if (e.getClickCount() == 1) {
+                    voyagesTable = (JTable)e.getSource();
+                    int row = voyagesTable.getSelectedRow();
+                    int column = voyagesTable.getSelectedColumn();
+
+                    System.out.println("Row: " + row + "Column: " + column);
+                    System.out.println(voyagesTable.getModel().getValueAt(row, column));
+                }
+            }
+        });
     }
 
 
@@ -96,14 +158,15 @@ public class Gui extends JFrame implements ActionListener{
         departurePointField.addActionListener(this);
         arrivalPointField.addActionListener(this);
         findButton.addActionListener(this);
+
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        main.actionPerformed(e);
+         main.actionPerformed(e);
     }
 
     public static void main(String[] args) {
-        Gui gui = new Gui();
+        Gui gui = new Gui(30);
     }
 }
