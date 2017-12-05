@@ -1,5 +1,6 @@
 import java.sql.Time;
 import java.util.Arrays;
+import java.util.Random;
 
 public class Voyage {
     private double id;
@@ -7,17 +8,42 @@ public class Voyage {
     private String arrivalPoint;
     private String date;
     private Time departureTime, arrivalTime;
-    private Seats seats;
+    private Seat[] sittingPlan;
 
-    public Voyage(String departurePoint, String arrivalPoint, String date, Time departureTime, Time arrivalTime, Seats seats) {
+    public Voyage(String departurePoint, String arrivalPoint, String date, Time departureTime, Time arrivalTime, int voyageCapasity) {
         this.id = Math.random() + 1;   //Todo: Give a shape to id's
         this.departurePoint = departurePoint;
         this.arrivalPoint = arrivalPoint;
         this.date = date;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
-        this.seats = seats;
+        this.sittingPlan = createSittingPlan(voyageCapasity);
     }
+
+    private Seat[] createSittingPlan(int voyageCapasity) {
+        Seat[] sittingPlan = new Seat[voyageCapasity];
+
+        for (int i = 1; i <= voyageCapasity; i++) {
+            Random rnd =  new Random();
+            int n = rnd.nextInt();
+            if(n%2 == 0){
+                sittingPlan[i - 1] = new Seat(i, selectGenderRandomly());
+            }else{
+                sittingPlan[i - 1] = new Seat(i);
+            }
+        }
+
+        return sittingPlan;
+    }
+
+    private boolean selectGenderRandomly(){
+        Random rnd =  new Random();
+        int n = rnd.nextInt();
+        boolean gender = n % 2 == 0;
+        return gender;
+    }
+
+
 
     public double getId() {
         return id;
@@ -67,24 +93,23 @@ public class Voyage {
         this.arrivalTime = arrivalTime;
     }
 
-    public Seats getSeats() {
-        return seats;
+    public Seat[] getSittingPlan() {
+        return sittingPlan;
     }
 
-    public void setSeats(Seats seats) {
-        this.seats = seats;
+    public void setSittingPlan(Seat[] sittingPlan) {
+        this.sittingPlan = sittingPlan;
     }
 
     @Override
     public String toString() {
         return "Voyage{" +
-                "id='" + id + '\'' +
+                "id=" + id +
                 ", departurePoint='" + departurePoint + '\'' +
                 ", arrivalPoint='" + arrivalPoint + '\'' +
-                ", date=" + date +
+                ", date='" + date + '\'' +
                 ", departureTime=" + departureTime +
                 ", arrivalTime=" + arrivalTime +
-                ", sittingPlan" + Arrays.toString(seats.sittingPlan) +
                 '}';
-    } //Todo: Print to console sitting plan accurately
+    }
 }

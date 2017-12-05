@@ -13,7 +13,7 @@ import java.util.Vector;
 public class Gui extends JFrame implements ActionListener{
     Main main;
 
-    private JPanel findVoyagesPanel, reservationPanel, confirmReservationPanel;
+    JPanel findVoyagesPanel, reservationPanel, confirmReservationPanel;
     private JTabbedPane tabbedPane;
     private JLabel dateLabel, departurePointLabel, arrivalPointLabel;
     JTextField dateField;
@@ -25,12 +25,11 @@ public class Gui extends JFrame implements ActionListener{
     private JTable voyagesTable;
 
     private int rowNumber;
-    private int sittingCapacity;
 
     private int widthOfGui = 1000;
 
     private int heightOfGui = 600;
-    Gui(int sittingCapacity) {
+    Gui() {
         this.setSize(this.widthOfGui, this.heightOfGui);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setLayout(new BorderLayout());
@@ -53,7 +52,7 @@ public class Gui extends JFrame implements ActionListener{
 
         designVoyagesPanel();
 
-        designReservationPanel(sittingCapacity);
+//        designReservationPanel();
 
     }
 
@@ -87,51 +86,34 @@ public class Gui extends JFrame implements ActionListener{
         addActionListeners();
     }
 
-    private void designReservationPanel(int sittingCapacity) {
+    private void designReservationPanel(Seat[] sittingPlan) {
+        reservationPanel.removeAll();
 
+        rowNumber = sittingPlan.length/4;
 
-        this.sittingCapacity = sittingCapacity;
-        rowNumber = sittingCapacity/4;
-
-        int index = 1;
+        int indexOfSeatToAddPanel = 1;
         for (int i = 0; i < rowNumber; i++) {
             for (int j = 0; j < 5; j++) {
                 if(j == 2){
                     reservationPanel.add(new JLabel(""));
                 }else{
-                    addSeatsRandomly(index);
-                    index++;
+                    reservationPanel.add(sittingPlan[indexOfSeatToAddPanel - 1]);
+                    indexOfSeatToAddPanel++;
                 }
             }
         }
     }
 
-    private void addSeatsRandomly(int index){
-        Random rnd =  new Random();
-        int n = rnd.nextInt();
-        if(n%2 == 0){
-            reservationPanel.add(new Seat(index, selectGenderRandomly()));
-        }else{
-            reservationPanel.add(new Seat(index));
-        }
-    }
-
-    private boolean selectGenderRandomly(){
-        Random rnd =  new Random();
-        int n = rnd.nextInt();
-        boolean gender = n % 2 == 0;
-        return gender;
-    }
-
-
     private void createTable() {
         String [] columnNames = {"Id", "Date", "Departure Point", "Arrival Point", "Departure Time", "Arrival Time"};
 
-        tableModel = new DefaultTableModel(null ,columnNames);
+        tableModel = new DefaultTableModel(null ,columnNames){
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         voyagesTable = new JTable(tableModel);
-        voyagesTable.getColumn("Id").setMaxWidth(75);
-        voyagesTable.getColumn("Departure Point").setMaxWidth(75);
-        voyagesTable.getColumn("Arrival Point").setMaxWidth(75);
+        voyagesTable.setRowSelectionAllowed(true);
         voyagesTable.setEnabled(true);
         voyagesTable.setCellSelectionEnabled(false);
 
@@ -142,10 +124,19 @@ public class Gui extends JFrame implements ActionListener{
                 if (e.getClickCount() == 1) {
                     voyagesTable = (JTable)e.getSource();
                     int row = voyagesTable.getSelectedRow();
-                    int column = voyagesTable.getSelectedColumn();
 
-                    System.out.println("Row: " + row + "Column: " + column);
-                    System.out.println(voyagesTable.getModel().getValueAt(row, column));
+                    System.out.println(voyagesTable.getModel().getValueAt(row, 0));
+
+                    Voyage selectedVoyage = null;
+
+                    for (Voyage voyage: main.listOfAllVoyages) {
+                        if (voyage.getId() == (double) voyagesTable.getModel().getValueAt(row, 0)) {
+                            selectedVoyage = voyage;
+                        }
+                    }
+
+                    designReservationPanel(selectedVoyage.getSittingPlan());
+
                 }
             }
         });
@@ -166,7 +157,4 @@ public class Gui extends JFrame implements ActionListener{
          main.actionPerformed(e);
     }
 
-    public static void main(String[] args) {
-        Gui gui = new Gui(30);
-    }
 }

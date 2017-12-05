@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Main implements ActionListener{
 
@@ -11,6 +12,7 @@ public class Main implements ActionListener{
 
     Gui gui;
     Customer customer;
+    int defaultCapasityOfVoyages;
 
     public Main(Gui gui, Customer customer) {
         this.gui = gui;
@@ -29,13 +31,15 @@ public class Main implements ActionListener{
             String startingPoint = startingPointArr[(int) (Math.random() * 5)];
             String endingPoint = endingPointArr[(int) (Math.random() * 5)];
 
-            listOfAllVoyages.add(new Voyage(startingPoint, endingPoint, "12/10/2017",
-                    new Time(12, 00, 00), new Time(16, 00, 00), new Seats()));
             //Todo; Time class deprecated.
+            listOfAllVoyages.add(new Voyage(startingPoint, endingPoint, "12/10/2017",
+                    new Time(12, 00, 00), new Time(16, 00, 00),
+                    defaultCapasityOfVoyages));
         }
 
         printVoyagesToTable(listOfAllVoyages);
     }
+
 
     //Prints all voyages in the list.
     void printVoyagesToConsole() {
@@ -45,7 +49,9 @@ public class Main implements ActionListener{
     }
 
     void printVoyagesToTable(ArrayList<Voyage> voyagesList) {
+        gui.reservationPanel.removeAll();
         gui.tableModel.setRowCount(0);
+
         for (Voyage voyage: voyagesList) {
             Object[] voyageData = {voyage.getId(), voyage.getDate(), voyage.getDeparturePoint(), voyage.getArrivalPoint(),
                     voyage.getDepartureTime(), voyage.getArrivalTime()};
@@ -59,7 +65,9 @@ public class Main implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(gui.findButton)) {
-            customer.getVoyages(listOfAllVoyages, gui.dateField.getText(), gui.departurePointField.getText(), gui.arrivalPointField.getText());
+            listOfMatchedVoyages = customer.getVoyages(listOfAllVoyages, gui.dateField.getText(),
+                    gui.departurePointField.getText(), gui.arrivalPointField.getText());
+            printVoyagesToTable(listOfMatchedVoyages);
 //            customer.getVoyages(listOfMatchedVoyages, "12/10/2017", "Izmir", "Bursa");
             //printVoyagesToConsole();   //Enable this to check voyages in console.
         } else if(e.getSource().equals(gui.tableModel)) {
@@ -68,9 +76,10 @@ public class Main implements ActionListener{
     }
 
     public static void main(String[] args) {
-        Gui gui = new Gui(40);
+        Gui gui = new Gui();
         Customer customer = new Customer();
         Main main = new Main(gui, customer);
+        main.defaultCapasityOfVoyages = 40;
 
         gui.main = main;
         customer.main = main;

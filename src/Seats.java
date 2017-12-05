@@ -3,21 +3,18 @@ import java.util.Arrays;
 public class Seats {
 
     //Todo: Connect Seats with SeatSelection Class
-    String sittingPlan[][];
 
-    public Seats() {
-        this.sittingPlan = new String[4][10];
-    }
+    Seat[] sittingPlan;
 
-    public Seats(String[][] sittingPlan) {
+    public Seats(Seat[] sittingPlan) {
         this.sittingPlan = sittingPlan;
     }
 
-    public String[][] getSittingPlan() {
+    public Seat[] getSittingPlan() {
         return sittingPlan;
     }
 
-    public void setSittingPlan(String[][] sittingPlan) {
+    public void setSittingPlan(Seat[] sittingPlan) {
         this.sittingPlan = sittingPlan;
     }
 
