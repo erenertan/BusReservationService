@@ -134,7 +134,7 @@ public class Gui extends JFrame implements ActionListener{
         voyagesTable.getColumn("Arrival Point").setMaxWidth(75);
         voyagesTable.setEnabled(true);
         voyagesTable.setCellSelectionEnabled(false);
-        
+
         voyagesTable.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(final MouseEvent e) {
