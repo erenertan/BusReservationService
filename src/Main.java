@@ -19,17 +19,22 @@ public class Main implements ActionListener{
         this.customer = customer;
     }
 
-    //Create voyages randomly
-    //Todo:There can be voyages to same city
+    //Creates voyages randomly
     //Todo:Create different voyages with departure and arrival time.
-    void createVoyages() {
+    ArrayList<Voyage> createVoyages(int numberOfSampleVoyages) {
         String[] startingPointArr = {"Bursa", "Ankara", "Canakkale", "Istanbul", "Izmir"};
         String[] endingPointArr = {"Bursa", "Bolu", "Edirne", "Istanbul", "Erzurum"};
 
-        for (int i = 0; i < 5; i++) {
+        //Create voyages up to numberOfSampleVoyages value .
+        for (int i = 0; i < numberOfSampleVoyages; i++) {
 //            System.out.println((int) (Math.random() * 5));
             String startingPoint = startingPointArr[(int) (Math.random() * 5)];
             String endingPoint = endingPointArr[(int) (Math.random() * 5)];
+
+            //To prevent equality of departure and arrival points.
+            if (startingPoint.equals(endingPoint)) {
+                endingPoint = endingPointArr[(int) (Math.random() * 5)];
+            }
 
             //Todo; Time class deprecated.
             listOfAllVoyages.add(new Voyage(startingPoint, endingPoint, "12/10/2017",
@@ -37,7 +42,7 @@ public class Main implements ActionListener{
                     defaultCapasityOfVoyages));
         }
 
-        printVoyagesToTable(listOfAllVoyages);
+        return listOfAllVoyages;
     }
 
 
@@ -84,7 +89,9 @@ public class Main implements ActionListener{
         gui.main = main;
         customer.main = main;
 
-        main.createVoyages();
+        //Creating sample voyages and printing them.
+        main.printVoyagesToTable(main.createVoyages(20));
+
         main.printVoyagesToConsole();
 
     }
