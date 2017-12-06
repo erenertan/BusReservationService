@@ -19,7 +19,7 @@ public class Gui extends JFrame implements ActionListener{
     JTextField dateField;
     JTextField departurePointField;
     JTextField arrivalPointField;
-    JButton findButton;
+    JButton findButton, showAllVoyages;
     DefaultTableModel tableModel;
 
     private JTable voyagesTable;
@@ -52,10 +52,9 @@ public class Gui extends JFrame implements ActionListener{
 
         designVoyagesPanel();
 
-//        designReservationPanel();
-
     }
 
+    //Todo:Add showAllVoyages button to voyages panel.
     private void designVoyagesPanel() {
         findVoyagesPanel.setLayout(new BorderLayout());
         JPanel entriesPanel = new JPanel(new GridLayout(2,4,2,2));
