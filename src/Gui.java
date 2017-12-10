@@ -1,10 +1,8 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.util.ArrayList;
 
 public class Gui extends JFrame implements ActionListener{
     Main main;
@@ -13,19 +11,16 @@ public class Gui extends JFrame implements ActionListener{
     private JTabbedPane tabbedPane;
     private JLabel dateLabel, departurePointLabel, arrivalPointLabel;
     //Todo:Add combo box to the voyage selection text fields.
-    JTextField dateField;
-    JTextField departurePointField;
-    JTextField arrivalPointField;
+    JTextField dateField, departurePointField, arrivalPointField, showSelectedSeatsInConfirmPanel;
     JButton findButton, showAllVoyages;
     DefaultTableModel tableModel;
 
     private JTable voyagesTable;
-
     private int rowNumber;
-
     private int widthOfGui = 1000;
-
     private int heightOfGui = 600;
+
+    private Voyage selectedVoyage = null;
 
     /**
      * Gui class is the view class. Creates tabs in frame.
@@ -41,18 +36,35 @@ public class Gui extends JFrame implements ActionListener{
 
         tabbedPane = new JTabbedPane();
         getContentPane().add(tabbedPane);
+        controlSelectedPane();
 
         findVoyagesPanel = new JPanel();
         findVoyagesPanel.setLayout(new BorderLayout());
         reservationPanel = new JPanel(new GridLayout(rowNumber, 5, 5, 5));
+
         confirmReservationPanel = new JPanel();
+        confirmReservationPanel.setLayout(new BorderLayout());
 
         tabbedPane.addTab("FindVoyages", findVoyagesPanel);
         tabbedPane.addTab("MakeReservation", reservationPanel);
         tabbedPane.addTab("ConfirmReservation", confirmReservationPanel);
 
         designVoyagesPanel();
+        designConfirmReservationPanel();
+    }
 
+    void controlSelectedPane() {
+        tabbedPane.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                tabbedPane = (JTabbedPane) e.getSource();
+
+                if(confirmReservationPanel.isShowing()){
+                    updateConfirmReservationPanel();
+
+                }
+            }
+        });
     }
 
     /**
@@ -77,6 +89,8 @@ public class Gui extends JFrame implements ActionListener{
         dateField = new JTextField();
         departurePointField = new JTextField();
         arrivalPointField = new JTextField();
+        showSelectedSeatsInConfirmPanel = new JTextField();
+        showSelectedSeatsInConfirmPanel.setEditable(false);
         entriesPanel.add(dateField);
         entriesPanel.add(departurePointField);
         entriesPanel.add(arrivalPointField);
@@ -138,9 +152,10 @@ public class Gui extends JFrame implements ActionListener{
                     voyagesTable = (JTable)e.getSource();
                     int row = voyagesTable.getSelectedRow();
 
-                    System.out.println(voyagesTable.getModel().getValueAt(row, 0));
+                    //Print id of voyages to console.
+//                    System.out.println(voyagesTable.getModel().getValueAt(row, 0));
 
-                    Voyage selectedVoyage = null;
+
 
                     for (Voyage voyage: main.listOfAllVoyages) {
                         if (voyage.getId() == (double) voyagesTable.getModel().getValueAt(row, 0)) {
@@ -149,10 +164,29 @@ public class Gui extends JFrame implements ActionListener{
                     }
 
                     designReservationPanel(selectedVoyage.getSittingPlan());
-
                 }
             }
         });
+    }
+
+    /**
+     * Prepare by adding components to confirmReservation panel.
+     */
+    void designConfirmReservationPanel() {
+        confirmReservationPanel.add(showSelectedSeatsInConfirmPanel, BorderLayout.CENTER);
+    }
+
+    /**
+     * Updates selected seats in confirmReservation panel.
+     */
+    void updateConfirmReservationPanel() {
+        for (Seat seat: selectedVoyage.getSittingPlan()) {
+            String selectedSeats = new String();
+            if (seat.isSelected) {
+                //Get selected seat here.
+            }
+            showSelectedSeatsInConfirmPanel.setText(selectedSeats);
+        }
     }
 
 
@@ -162,7 +196,6 @@ public class Gui extends JFrame implements ActionListener{
         departurePointField.addActionListener(this);
         arrivalPointField.addActionListener(this);
         findButton.addActionListener(this);
-
     }
 
     @Override

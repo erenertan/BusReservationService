@@ -9,7 +9,7 @@ public class Main implements ActionListener{
     static ArrayList<Voyage> listOfAllVoyages = new ArrayList();
     static ArrayList<Voyage> listOfMatchedVoyages = new ArrayList<>();
 
-    Gui gui;
+    static Gui gui;
     Customer customer;
     int defaultCapasityOfVoyages;
     GetTimeAndDate getTimeAndDate = new GetTimeAndDate();
@@ -29,7 +29,7 @@ public class Main implements ActionListener{
      * @param args
      */
     public static void main(String[] args) {
-        Gui gui = new Gui();
+        gui = new Gui();
         Customer customer = new Customer();
         Main main = new Main(gui, customer);
         main.defaultCapasityOfVoyages = 40;
@@ -38,7 +38,7 @@ public class Main implements ActionListener{
         customer.main = main;
 
         //Creating sample voyages and printing them.
-        main.printVoyagesToTable(main.createVoyages(40));
+        main.printVoyagesToTable(main.createVoyages(1));
 
 //        main.printVoyagesToConsole();
 
@@ -71,7 +71,7 @@ public class Main implements ActionListener{
             }
 
             //Todo; Time class deprecated.
-            listOfAllVoyages.add(new Voyage(startingPoint, endingPoint, getTimeAndDate.getRandomDay(),
+            listOfAllVoyages.add(new Voyage(gui, startingPoint, endingPoint, getTimeAndDate.getRandomDay(),
                     new Time(departureTime, 00, 00), new Time(endingTime, 00, 00),
                     defaultCapasityOfVoyages));
         }

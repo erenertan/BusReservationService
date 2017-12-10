@@ -1,8 +1,11 @@
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 public class Voyage {
+
+    static Gui gui;
     private double id;
     private String departurePoint;
     private String arrivalPoint;
@@ -11,41 +14,42 @@ public class Voyage {
     private Seat[] sittingPlan;
 
     /**
-     * Voyage class to create voyages between countries.
+     *
+     * @param gui Interface manager(Gui class) to push index of seats
      * @param departurePoint Departure point of voyage.
      * @param arrivalPoint Arrival point of voyage
      * @param date Departure date of voyage.
      * @param departureTime Departure time of voyage.
-     * @param arrivalTime Arrival time of voyage.
-     * @param voyageCapasity Capasity of voyage.
+     * @param arrivalTime Arrival time to arrival point of voyage.
+     * @param voyageCapacity Sitting capacity of voyage.
      */
-    public Voyage(String departurePoint, String arrivalPoint, String date, Time departureTime, Time arrivalTime, int voyageCapasity) {
+    public Voyage(Gui gui, String departurePoint, String arrivalPoint, String date, Time departureTime,
+                  Time arrivalTime, int voyageCapacity) {
+        this.gui = gui;
         this.id = Math.random() + 1;   //Todo: Give a shape to id's
         this.departurePoint = departurePoint;
         this.arrivalPoint = arrivalPoint;
         this.date = date;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
-
-
-        this.sittingPlan = createSittingPlan(voyageCapasity);
+        this.sittingPlan = createSittingPlan(voyageCapacity);
     }
 
     /**
-     * Takes voyage capasity as paramater from constructor and creates sitting plan for the voyage.
-     * @param voyageCapasity Number of voyage capasity.
+     * Takes voyage capacity as paramater from constructor and creates sitting plan for the voyage.
+     * @param voyageCapacity Number of voyage capacity.
      * @return sitting plan for the voyage.
      */
-    private Seat[] createSittingPlan(int voyageCapasity) {
-        Seat[] sittingPlan = new Seat[voyageCapasity];
+    private Seat[] createSittingPlan(int voyageCapacity) {
+        Seat[] sittingPlan = new Seat[voyageCapacity];
 
-        for (int i = 1; i <= voyageCapasity; i++) {
+        for (int i = 1; i <= voyageCapacity; i++) {
             Random rnd =  new Random();
             int n = rnd.nextInt();
             if(n%2 == 0){
                 sittingPlan[i - 1] = new Seat(i, selectGenderRandomly());
             }else{
-                sittingPlan[i - 1] = new Seat(i);
+                sittingPlan[i - 1] = new Seat(i, gui);
             }
         }
 
@@ -54,7 +58,7 @@ public class Voyage {
 
     /**
      * Creates random gender for voyages.
-     * @return
+     * @return Gender of seat.
      */
     private boolean selectGenderRandomly(){
         Random rnd =  new Random();
