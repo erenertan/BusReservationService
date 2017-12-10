@@ -10,6 +10,15 @@ public class Voyage {
     private Time departureTime, arrivalTime;
     private Seat[] sittingPlan;
 
+    /**
+     * Voyage class to create voyages between countries.
+     * @param departurePoint Departure point of voyage.
+     * @param arrivalPoint Arrival point of voyage
+     * @param date Departure date of voyage.
+     * @param departureTime Departure time of voyage.
+     * @param arrivalTime Arrival time of voyage.
+     * @param voyageCapasity Capasity of voyage.
+     */
     public Voyage(String departurePoint, String arrivalPoint, String date, Time departureTime, Time arrivalTime, int voyageCapasity) {
         this.id = Math.random() + 1;   //Todo: Give a shape to id's
         this.departurePoint = departurePoint;
@@ -17,9 +26,16 @@ public class Voyage {
         this.date = date;
         this.departureTime = departureTime;
         this.arrivalTime = arrivalTime;
+
+
         this.sittingPlan = createSittingPlan(voyageCapasity);
     }
 
+    /**
+     * Takes voyage capasity as paramater from constructor and creates sitting plan for the voyage.
+     * @param voyageCapasity Number of voyage capasity.
+     * @return sitting plan for the voyage.
+     */
     private Seat[] createSittingPlan(int voyageCapasity) {
         Seat[] sittingPlan = new Seat[voyageCapasity];
 
@@ -36,6 +52,10 @@ public class Voyage {
         return sittingPlan;
     }
 
+    /**
+     * Creates random gender for voyages.
+     * @return
+     */
     private boolean selectGenderRandomly(){
         Random rnd =  new Random();
         int n = rnd.nextInt();

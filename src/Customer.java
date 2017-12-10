@@ -1,4 +1,3 @@
-import java.sql.Time;
 import java.util.ArrayList;
 
 public class Customer {
@@ -8,9 +7,20 @@ public class Customer {
     Main main;
 
 
+    /**
+     * Customer class to simulate customer aspects from main class.
+     */
     public Customer() {
     }
 
+    /**
+     * Gets voyages depends on user selection.
+     * @param allVoyagesList All voyages in database.
+     * @param date Parameter to find matched voyages with user input date.
+     * @param departurePoint Parameter that takes departure point from user.
+     * @param arrivalPoint Parameter that takes arrival point from user.
+     * @return list of found voyages from all list depends on selection.
+     */
     //Get voyages by starting, ending points and date.
     ArrayList<Voyage> getVoyages(ArrayList<Voyage> allVoyagesList, String date, String departurePoint, String arrivalPoint) {
         //System.out.println("List of the voyages matched:");

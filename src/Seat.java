@@ -10,6 +10,11 @@ class Seat extends JLabel {
     boolean gender;
     boolean isSelected;
 
+    /**
+     * There are number of seats at sitting plan for a voyage. Seats are creating with this class.
+     * @param index Index of that seat to reserve it.
+     * @param gender Gender of customer who reserved the seat.
+     */
     public Seat(int index, boolean gender) {
         super(Integer.toString(index));
         this.index = index;

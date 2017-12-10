@@ -1,11 +1,10 @@
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Time;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Main implements ActionListener{
+
 
     static ArrayList<Voyage> listOfAllVoyages = new ArrayList();
     static ArrayList<Voyage> listOfMatchedVoyages = new ArrayList<>();
@@ -13,17 +12,45 @@ public class Main implements ActionListener{
     Gui gui;
     Customer customer;
     int defaultCapasityOfVoyages;
+    GetTimeAndDate getTimeAndDate = new GetTimeAndDate();
 
+    /**
+     *
+     * @param gui
+     * @param customer
+     */
     public Main(Gui gui, Customer customer) {
         this.gui = gui;
         this.customer = customer;
     }
 
+    /**
+     * Sample comment for main method.
+     * @param args
+     */
+    public static void main(String[] args) {
+        Gui gui = new Gui();
+        Customer customer = new Customer();
+        Main main = new Main(gui, customer);
+        main.defaultCapasityOfVoyages = 40;
+
+        gui.main = main;
+        customer.main = main;
+
+        //Creating sample voyages and printing them.
+        main.printVoyagesToTable(main.createVoyages(40));
+
+//        main.printVoyagesToConsole();
+
+
+    }
+
     //Creates voyages randomly
-    //Todo:Create different voyages with departure and arrival time.
+    //Todo:Order voyages depends on days.
     ArrayList<Voyage> createVoyages(int numberOfSampleVoyages) {
-        String[] startingPointArr = {"Bursa", "Ankara", "Canakkale", "Istanbul", "Izmir"};
-        String[] endingPointArr = {"Bursa", "Bolu", "Edirne", "Istanbul", "Erzurum"};
+        String[] startingPointArr = {"Bursa", "Ankara", "Canakkale", "Istanbul", "Izmir", "Maraş", "Balıkkesir", "Erzincan", "Erzurum"};
+        String[] endingPointArr = {"Bursa", "Ankara", "Canakkale", "Istanbul", "Izmir", "Maraş", "Balıkkesir", "Erzincan", "Erzurum"};
+
 
         //Create voyages up to numberOfSampleVoyages value .
         for (int i = 0; i < numberOfSampleVoyages; i++) {
@@ -31,16 +58,24 @@ public class Main implements ActionListener{
             String startingPoint = startingPointArr[(int) (Math.random() * 5)];
             String endingPoint = endingPointArr[(int) (Math.random() * 5)];
 
+            int departureTime = (int) (Math.random() * 24) + 1;
+            int endingTime = ((int) (Math.random() * 24)) + departureTime;
+
+            if (departureTime == endingTime) {
+                endingTime = (int) (Math.random() * 24) + 1;
+            }
+
             //To prevent equality of departure and arrival points.
             if (startingPoint.equals(endingPoint)) {
                 endingPoint = endingPointArr[(int) (Math.random() * 5)];
             }
 
             //Todo; Time class deprecated.
-            listOfAllVoyages.add(new Voyage(startingPoint, endingPoint, "12/10/2017",
-                    new Time(12, 00, 00), new Time(16, 00, 00),
+            listOfAllVoyages.add(new Voyage(startingPoint, endingPoint, getTimeAndDate.getRandomDay(),
+                    new Time(departureTime, 00, 00), new Time(endingTime, 00, 00),
                     defaultCapasityOfVoyages));
         }
+
 
         return listOfAllVoyages;
     }
@@ -66,7 +101,6 @@ public class Main implements ActionListener{
         listOfMatchedVoyages.clear();
     }
 
-
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource().equals(gui.findButton)) {
@@ -78,21 +112,5 @@ public class Main implements ActionListener{
         } else if(e.getSource().equals(gui.tableModel)) {
             System.out.println("This is table.");
         }
-    }
-
-    public static void main(String[] args) {
-        Gui gui = new Gui();
-        Customer customer = new Customer();
-        Main main = new Main(gui, customer);
-        main.defaultCapasityOfVoyages = 40;
-
-        gui.main = main;
-        customer.main = main;
-
-        //Creating sample voyages and printing them.
-        main.printVoyagesToTable(main.createVoyages(20));
-
-        main.printVoyagesToConsole();
-
     }
 }
