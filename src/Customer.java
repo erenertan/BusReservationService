@@ -1,6 +1,8 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class Customer {
+public class Customer implements ActionListener{
 
     private String name, surname, gender;
     private int age;
@@ -43,10 +45,15 @@ public class Customer {
     }
 
     void makeReservation() {
-
+        
     }
 
     void confirmReservation() {
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
 
     }
 }

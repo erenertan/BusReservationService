@@ -2,20 +2,22 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.util.ArrayList;
+
+
 
 public class Gui extends JFrame implements ActionListener{
     Main main;
+    Customer customer;
 
     JPanel findVoyagesPanel, reservationPanel, confirmReservationPanel;
     private JTabbedPane tabbedPane;
     private JLabel dateLabel, departurePointLabel, arrivalPointLabel;
     //Todo:Add combo box to the voyage selection text fields.
     JTextField dateField, departurePointField, arrivalPointField, showSelectedSeatsInConfirmPanel;
-    JButton findButton, showAllVoyages;
-    DefaultTableModel tableModel;
+    JButton findButton, showAllVoyages, makeReservationBtn, confirmReservationBtn;
+    DefaultTableModel tableModelForVoyages, tableModelForReservation;
 
-    private JTable voyagesTable;
+    private JTable voyagesTable, reservationTable;
     private int rowNumber;
     private int widthOfGui = 1000;
     private int heightOfGui = 600;
@@ -40,7 +42,7 @@ public class Gui extends JFrame implements ActionListener{
 
         findVoyagesPanel = new JPanel();
         findVoyagesPanel.setLayout(new BorderLayout());
-        reservationPanel = new JPanel(new GridLayout(rowNumber, 5, 5, 5));
+        reservationPanel = new JPanel(new BorderLayout());
 
         confirmReservationPanel = new JPanel();
         confirmReservationPanel.setLayout(new BorderLayout());
@@ -61,7 +63,6 @@ public class Gui extends JFrame implements ActionListener{
 
                 if(confirmReservationPanel.isShowing()){
                     updateConfirmReservationPanel();
-
                 }
             }
         });
@@ -98,10 +99,11 @@ public class Gui extends JFrame implements ActionListener{
         findButton = new JButton("FIND");
         entriesPanel.add(findButton);
         findVoyagesPanel.add(entriesPanel,BorderLayout.NORTH);
+        showAllVoyages = new JButton("Show All Voyages");
+        findVoyagesPanel.add(showAllVoyages, BorderLayout.SOUTH);
         //Table
-        createTable();
+        createVoyagesTable();
         findVoyagesPanel.add(new JScrollPane(voyagesTable), BorderLayout.CENTER);
-
         addActionListeners();
     }
 
@@ -114,32 +116,37 @@ public class Gui extends JFrame implements ActionListener{
         reservationPanel.removeAll();
 
         rowNumber = sittingPlan.length/4;
+        JPanel allSeatsPanel = new JPanel(new GridLayout(rowNumber, 5, 5, 5));
 
         int indexOfSeatToAddPanel = 1;
         for (int i = 0; i < rowNumber; i++) {
             for (int j = 0; j < 5; j++) {
                 if(j == 2){
-                    reservationPanel.add(new JLabel(""));
+                    allSeatsPanel.add(new JLabel(""));
                 }else{
-                    reservationPanel.add(sittingPlan[indexOfSeatToAddPanel - 1]);
+                    allSeatsPanel.add(sittingPlan[indexOfSeatToAddPanel - 1]);
                     indexOfSeatToAddPanel++;
                 }
             }
         }
+
+        reservationPanel.add(allSeatsPanel, BorderLayout.CENTER);
+        makeReservationBtn = new JButton("Make Reservation");
+        reservationPanel.add(makeReservationBtn, BorderLayout.SOUTH);
     }
 
     /**
      * Method to create table which shows voyages.
      */
-    private void createTable() {
+    private void createVoyagesTable() {
         String [] columnNames = {"Id", "Date", "Departure Point", "Arrival Point", "Departure Time", "Arrival Time"};
 
-        tableModel = new DefaultTableModel(null ,columnNames){
+        tableModelForVoyages = new DefaultTableModel(null ,columnNames){
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        voyagesTable = new JTable(tableModel);
+        voyagesTable = new JTable(tableModelForVoyages);
         voyagesTable.setRowSelectionAllowed(true);
         voyagesTable.setEnabled(true);
         voyagesTable.setCellSelectionEnabled(false);
@@ -154,8 +161,6 @@ public class Gui extends JFrame implements ActionListener{
 
                     //Print id of voyages to console.
 //                    System.out.println(voyagesTable.getModel().getValueAt(row, 0));
-
-
 
                     for (Voyage voyage: main.listOfAllVoyages) {
                         if (voyage.getId() == (double) voyagesTable.getModel().getValueAt(row, 0)) {
@@ -173,21 +178,39 @@ public class Gui extends JFrame implements ActionListener{
      * Prepare by adding components to confirmReservation panel.
      */
     void designConfirmReservationPanel() {
-        confirmReservationPanel.add(showSelectedSeatsInConfirmPanel, BorderLayout.CENTER);
+        createReservationTable();
+        confirmReservationPanel.add(new JScrollPane(reservationTable), BorderLayout.CENTER);
+
+        confirmReservationBtn = new JButton("Confirm");
+        confirmReservationPanel.add(confirmReservationBtn, BorderLayout.SOUTH);
+    }
+
+    private void createReservationTable() {
+        //Todo:Add Selecting a Category(Adult, child), birthday columns to table
+        String [] columnNames = {"First Name", "Last Name", "Id", "Sex", "Amount"};
+
+        tableModelForReservation= new DefaultTableModel(null ,columnNames);
+
+        reservationTable = new JTable(tableModelForReservation);
+        reservationTable.setRowSelectionAllowed(true);
+        reservationTable.setEnabled(true);
+
     }
 
     /**
      * Updates selected seats in confirmReservation panel.
      */
     void updateConfirmReservationPanel() {
+        tableModelForReservation.setRowCount(0);
+
         for (Seat seat: selectedVoyage.getSittingPlan()) {
-            String selectedSeats = new String();
             if (seat.isSelected) {
-                //Get selected seat here.
+                Object[] data = {"", "", "", "", seat.price};
+                tableModelForReservation.addRow(data);
             }
-            showSelectedSeatsInConfirmPanel.setText(selectedSeats);
         }
     }
+
 
 
     private void addActionListeners() {
@@ -196,10 +219,15 @@ public class Gui extends JFrame implements ActionListener{
         departurePointField.addActionListener(this);
         arrivalPointField.addActionListener(this);
         findButton.addActionListener(this);
+        showAllVoyages.addActionListener(this);
+        confirmReservationBtn.addActionListener(this);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource().equals(confirmReservationBtn)) {
+            customer.actionPerformed(e);
+        }
          main.actionPerformed(e);
     }
 

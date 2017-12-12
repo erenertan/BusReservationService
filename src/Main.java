@@ -35,10 +35,11 @@ public class Main implements ActionListener{
         main.defaultCapasityOfVoyages = 40;
 
         gui.main = main;
+        gui.customer = customer;
         customer.main = main;
 
         //Creating sample voyages and printing them.
-        main.printVoyagesToTable(main.createVoyages(1));
+        main.printVoyagesToTable(main.createVoyages(40));
 
 //        main.printVoyagesToConsole();
 
@@ -90,12 +91,12 @@ public class Main implements ActionListener{
 
     void printVoyagesToTable(ArrayList<Voyage> voyagesList) {
         gui.reservationPanel.removeAll();
-        gui.tableModel.setRowCount(0);
+        gui.tableModelForVoyages.setRowCount(0);
 
         for (Voyage voyage: voyagesList) {
             Object[] voyageData = {voyage.getId(), voyage.getDate(), voyage.getDeparturePoint(), voyage.getArrivalPoint(),
                     voyage.getDepartureTime(), voyage.getArrivalTime()};
-            gui.tableModel.addRow(voyageData);
+            gui.tableModelForVoyages.addRow(voyageData);
         }
 
         listOfMatchedVoyages.clear();
@@ -109,8 +110,10 @@ public class Main implements ActionListener{
             printVoyagesToTable(listOfMatchedVoyages);
 //            customer.getVoyages(listOfMatchedVoyages, "12/10/2017", "Izmir", "Bursa");
             //printVoyagesToConsole();   //Enable this to check voyages in console.
-        } else if(e.getSource().equals(gui.tableModel)) {
+        } else if(e.getSource().equals(gui.tableModelForVoyages)) {
             System.out.println("This is table.");
+        } else if(e.getSource().equals(gui.showAllVoyages)) {
+            printVoyagesToTable(listOfAllVoyages);
         }
     }
 }

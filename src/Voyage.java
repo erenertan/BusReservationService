@@ -12,6 +12,7 @@ public class Voyage {
     private String date;
     private Time departureTime, arrivalTime;
     private Seat[] sittingPlan;
+    private int defaultSeatPrice = 50;
 
     /**
      *
@@ -47,9 +48,9 @@ public class Voyage {
             Random rnd =  new Random();
             int n = rnd.nextInt();
             if(n%2 == 0){
-                sittingPlan[i - 1] = new Seat(i, selectGenderRandomly());
+                sittingPlan[i - 1] = new Seat(i, defaultSeatPrice, selectGenderRandomly());
             }else{
-                sittingPlan[i - 1] = new Seat(i, gui);
+                sittingPlan[i - 1] = new Seat(i, defaultSeatPrice ,gui);
             }
         }
 

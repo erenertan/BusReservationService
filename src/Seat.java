@@ -6,6 +6,7 @@ import java.awt.event.MouseEvent;
 class Seat extends JLabel {
 
     int index;
+    int price;
     static Gui gui;
     boolean isEmpty = true;
     boolean gender;
@@ -16,9 +17,10 @@ class Seat extends JLabel {
      * @param index Index of that seat to reserve it.
      * @param gender Gender of customer who reserved the seat.
      */
-    public Seat(int index, boolean gender) {
+    public Seat(int index,int price, boolean gender) {
         super(Integer.toString(index));
         this.index = index;
+        this.price = price;
         this.gender = gender;
         this.isEmpty = false;
         this.setOpaque(true);
@@ -37,10 +39,11 @@ class Seat extends JLabel {
      * Customer will select these seats by clicking on that in reservation panel.
      * @param index
      */
-    public Seat(int index, Gui gui) {
+    public Seat(int index, int price, Gui gui) {
         super(Integer.toString(index));
-        this.gui  = gui;
+        Seat.gui = gui;
         this.index = index;
+        this.price = price;
         this.isEmpty = false;
         this.isSelected = false;
         this.setOpaque(true);
